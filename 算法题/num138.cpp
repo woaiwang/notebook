@@ -5,9 +5,9 @@ using namespace std;
 // Definition for a Node.
 class Node {
 public:
-    int val;
-    Node* next;
-    Node* random;
+    int val; // 节点的值
+    Node* next; // 指向下一个节点的指针
+    Node* random; // 指向随机节点的指针
 
     Node(int _val) {
         val = _val;
@@ -16,60 +16,52 @@ public:
     }
 };
 
-
 class Solution {
 public:
     Node* copyRandomList(Node* head) {
-        if(head==NULL)
-        {
-            return NULL;
+        if(head==NULL) {
+            return NULL; // 如果链表为空，直接返回 NULL
         }
-        Node* cur=head;
-        while(cur)
-        {
-            int t=cur->val;
-            Node* x=cur->next;
-            Node* m=new Node(t);
-            cur->next=m;
-            m->next=x;
-            cur=x;
+
+        // 第一步：在每个原节点后面创建一个新节点
+        Node* cur = head;
+        while(cur) {
+            int t = cur->val; // 获取当前节点的值
+            Node* x = cur->next; // 保存原链表的下一个节点
+            Node* m = new Node(t); // 创建新节点
+            cur->next = m; // 将新节点插入到当前节点后面
+            m->next = x; // 新节点的 next 指向原链表的下一个节点
+            cur = x; // 移动到下一个原节点
         }
-        cur=head;
-       
+
+        // 第二步：设置新节点的随机指针
+        cur = head;
         while (cur) {
             if (cur->random) {
-                cur->next->random = cur->random->next;
+                cur->next->random = cur->random->next; // 新节点的 random 指向对应的复制节点
             } else {
-                cur->next->random = NULL;  // 重要：处理NULL情况
+                cur->next->random = NULL; // 如果原节点的 random 为 NULL，新节点的 random 也为 NULL
             }
-            cur = cur->next->next;
+            cur = cur->next->next; // 跳过新节点，移动到下一个原节点
         }
-        // 3. 分离两个链表
+
+        // 第三步：分离原链表和复制链表
         cur = head;
-        Node* dummy = new Node(0);
-        Node* copyCur = dummy;
+        Node* dummy = new Node(0); // 创建一个虚拟头节点
+        Node* copyCur = dummy; // 用于构建复制链表的指针
         
         while (cur) {
-            // 记录下一个原节点
-            Node* nextOriginal = cur->next->next;
-            
-            // 提取新节点
-            Node* copyNode = cur->next;
-            
-            // 将新节点加入到新链表
-            copyCur->next = copyNode;
-            copyCur = copyNode;
-            
-            // 恢复原链表
-            cur->next = nextOriginal;
-            
-            // 移动到下一个原节点
-            cur = nextOriginal;
+            Node* nextOriginal = cur->next->next; // 保存下一个原节点
+            Node* copyNode = cur->next; // 提取新节点
+            copyCur->next = copyNode; // 将新节点加入到复制链表
+            copyCur = copyNode; // 移动复制链表的指针
+            cur->next = nextOriginal; // 恢复原链表
+            cur = nextOriginal; // 移动到下一个原节点
         }
-        
-        // 4. 返回新链表的头节点
+
+        // 第四步：返回复制链表的头节点
         Node* newHead = dummy->next;
-        delete dummy;  // 释放dummy节点
+        delete dummy; // 释放虚拟头节点
         return newHead;
     }
 };
@@ -78,14 +70,14 @@ public:
 void printList(Node* head) {
     Node* cur = head;
     while (cur) {
-        cout << "Node value: " << cur->val;
+        cout << "Node value: " << cur->val; // 打印节点值
         if (cur->random) {
-            cout << ", Random points to: " << cur->random->val;
+            cout << ", Random points to: " << cur->random->val; // 打印随机指针指向的节点值
         } else {
-            cout << ", Random points to: NULL";
+            cout << ", Random points to: NULL"; // 随机指针为空
         }
         cout << endl;
-        cur = cur->next;
+        cur = cur->next; // 移动到下一个节点
     }
 }
 
